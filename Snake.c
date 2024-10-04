@@ -1,8 +1,8 @@
+#include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <conio.h>
 #include <time.h>
+#include <unistd.h>
 
 #define H 20
 #define W 20
@@ -17,7 +17,7 @@ struct Player {
     char dir;
 } head;
 
-struct Body{
+struct Body {
     int x;
     int y;
 } body[MLen];
@@ -28,18 +28,16 @@ struct Item {
     int y;
 } apple;
 
-void clearTerminal() {
-    printf("\033[H");
-}
+void clearTerminal() { printf("\033[H"); }
 
 void renderMap() {
-    usleep(MS*8);
+    usleep(MS * 8);
     clearTerminal();
 
     char map[H][W];
 
-    printf( "Score: %d\n", bodyLen );
-    for( int i = 0; i < H; i++ ){
+    printf("Score: %d\n", bodyLen);
+    for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
             map[i][j] = '.';
         }
@@ -48,24 +46,26 @@ void renderMap() {
     map[head.y][head.x] = 'O';
     map[apple.y][apple.x] = 'X';
 
-    if( head.y == apple.y && head.x == apple.x ) {
+    if (head.y == apple.y && head.x == apple.x) {
         bodyLen++;
         apple.x = rand() % W;
         apple.y = rand() % H;
     }
 
-    for( int i = 0; i < bodyLen; i++ ) {
+    for (int i = 0; i < bodyLen; i++) {
         map[body[i].y][body[i].x] = 'o';
 
-        if( body[i].x == head.x && body[i].y == head.y ){
+        if (body[i].x == head.x && body[i].y == head.y) {
             out = 1;
-        }else if( bodyLen == MLen ){
-            out = 2;    
+        } else if (bodyLen == MLen) {
+            out = 2;
         }
     }
 
-    for( int i = 0; i < H; i++ ) {
-        for (int j = 0; j < W; j++) {   printf("%c ", map[i][j]);   }
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < W; j++) {
+            printf("%c ", map[i][j]);
+        }
         printf("\n");
     }
 }
@@ -88,13 +88,14 @@ void checkKey(char input) {
 }
 
 void updateMov() {
-
-        for(int i = bodyLen; i >= 0; i--){
-            if(i==0){
-                body[0].x = head.x;
-                body[0].y = head.y;
-            }else{  body[i] = body[i - 1]; }
+    for (int i = bodyLen; i >= 0; i--) {
+        if (i == 0) {
+            body[0].x = head.x;
+            body[0].y = head.y;
+        } else {
+            body[i] = body[i - 1];
         }
+    }
 
     switch (head.dir) {
         case 'w':
@@ -117,8 +118,8 @@ void updateMov() {
 }
 
 int main() {
-
     system("cls");
+    system("mode con: cols=40 lines=22");
     srand(time(NULL));
 
     apple.x = rand() % W;
@@ -129,19 +130,22 @@ int main() {
     head.dir = 'w';
 
     while (1) {
-
-        if (_kbhit()) { char input = _getch();  if (input == 27) break; checkKey(input);}
+        if (_kbhit()) {
+            char input = _getch();
+            if (input == 27) break;
+            checkKey(input);
+        }
 
         updateMov();
         renderMap();
 
-        if (out==1){
+        if (out == 1) {
             system("cls");
             printf("You Lost!\n");
             system("pause");
             return 0;
 
-        }else if(out==2){
+        } else if (out == 2) {
             system("cls");
             printf("You Win!\n");
             system("pause");
